@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>My First NoSQL App</title>
+	<style>
+      body {
+        color: #222;
+        font: 14px Arial;
+      }
+      
+      body a {
+        color: #3D5C9D;
+        text-decoration: none;
+      }
+    </style>
+
+	<script>
+	var myLawnchair = {};
+    window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+	//window.indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+	
+	if('webkitIndexedDB' in window) {
+		window.IDBTransaction = window.webkitIDBTransaction;
+        window.IDBKeyRange = window.webkitIDBKeyRange;
+	}
+	
+	myLawnchair.indexedDB = {};
+	myLawnchair.indexedDB.db = null;
+	
+	myLawnchair.indexedDB.onerror = function(e) {
+		console.log(e);
+	};
+	
+	myLawnchair.indexedDB.open = function() {
+		// Step 1:  Creating/Opening the database
+		var request = indexedDB.open("todos");
+		
+		request.onsuccess = function(e) {
+			//var v = "1.0";  // string
+			var v = 1;  // numeric
+			myLawnchair.indexedDB.db = e.target.result;
+			var db = myLawnchair.indexedDB.db;
+				
+			// We can only create Object stores in a setVersion transaction;
+			if(v != db.version) {
+				var setVrequest = db.setVersion(v);
+				
+				// onsuccess is the only place we can create Object Stores
+			    //setVrequest.onfailure = myLawnchair.indexedDB.onerror;  // String version
+				setVrequest.onerror = myLawnchair.indexedDB.onerror; // numeric version
+			    setVrequest.onsuccess = function(e) {
+					if(db.objectStoreNames.contains("todo")) {
+						db.deleteObjectStore("todo");
+					}
+
+					// Step 2:  Creating an object store
+					var store = db.createObjectStore("todo", {keyPath: "timeStamp"});
+					e.target.transaction.oncomplete = function() {
+						myLawnchair.indexedDB.getAllTodoItems();
+					};
+				};
+			} else {
+				request.transaction.oncomplete = function() {
+					myLawnchair.indexedDB.getAllTodoItems();
+				};
+			}
+		};
+		
+		//request.onfailure = myLawnchair.indexedDB.onerror; // String version
+		request.onerror = myLawnchair.indexedDB.onerror; // numeric version
+	}
+
+	// Step 3:  Adding data to an object store
+	myLawnchair.indexedDB.addTodo = function(todoText) {
+		var db = myLawnchair.indexedDB.db;
+		var trans = db.transaction(["todo"], "readwrite");
+		var store = trans.objectStore("todo");
+		
+		// One Step
+		/*var request = store.put({
+			"text": todoText,
+			"timeStamp" : new Date().getTime()
+		});*/
+
+		// Two Steps
+		var data = {
+			"text": todoText,
+			"timeStamp": new Date().getTime()
+		};
+		
+		var request = store.put(data);
+		
+		request.onsuccess = function(e) {
+			// Re-render all the todo's
+			myLawnchair.indexedDB.getAllTodoItems();
+		};
+		
+		request.onerror = function(e) {
+			console.log(e.value);
+			console.log("Error Adding: ", e);
+		};
+	};
+
+	// Step 4:  Querying the data in the a store
+	myLawnchair.indexedDB.getAllTodoItems = function() {
+		var todos = document.getElementById("todoItems");
+		todos.innerHTML = "";
+		
+		var db = myLawnchair.indexedDB.db;
+		var trans = db.transaction(["todo"], "readwrite");
+		var store = trans.objectStore("todo");
+		
+		// Get everything in the store;  one way of doing that
+		//var keyRange = IDBKeyRange.lowerBound(0);
+		//var cursorRequest = store.openCursor(keyRange);
+
+		// Get everything in the store; another way of doing that
+		var cursorRequest = store.openCursor();
+		
+		cursorRequest.onsuccess = function(e) {
+			var result = e.target.result;
+			
+			if(!!result == false)
+				return;
+			
+			renderTodo(result.value);
+			result.continue();
+		};
+
+		cursorRequest.onerror = myLawnchair.indexedDB.onerror;
+	};
+
+	// Step 4A:  Rendering data from an object store
+	function renderTodo(row) {
+		var todos = document.getElementById("todoItems");
+		var li = document.createElement("li");
+		var a = document.createElement("a");
+		var t = document.createTextNode(row.text);
+		
+		a.addEventListener("click", function() {
+			myLawnchair.indexedDB.deleteTodo(row.timeStamp);
+		}, false);
+
+		a.textContent = " [Delete]";
+		li.appendChild(t);
+		li.appendChild(a);
+		todos.appendChild(li)
+	}
+
+	// Step 5:  Deleting data from a table
+	myLawnchair.indexedDB.deleteTodo = function(id) {
+		var db = myLawnchair.indexedDB.db;
+		var trans = db.transaction(["todo"], "readwrite");
+		var store = trans.objectStore("todo");
+		
+		var request = store.delete(id);
+
+		request.onsuccess = function(e) {
+			myLawnchair.indexedDB.getAllTodoItems();  // Refresh the screen
+		};
+		
+		request.onerror = function(e) {
+			console.log(e);
+			console.log("Error Adding: ", e);
+		};
+	};
+
+	// Step 6:  Hooking it all up
+	function addTodo() {
+		var todo = document.getElementById("todo");
+		myLawnchair.indexedDB.addTodo(todo.value);
+		todo.value = "";
+	}
+	
+	function init() {
+		myLawnchair.indexedDB.open();
+	}
+	
+	window.addEventListener("DOMContentLoaded", init, false);
+	</script>
+</head>
+<body>
+	<p class="a">Testing with Indexed DB</p>
+	<ul id="todoItems"></ul>
+    <input type="text" id="todo" name="todo" placeholder="What do you need to do?" style="width: 200px;" />
+    <input type="submit" value="Add Todo Item" onclick="addTodo(); return false;"/>
+</body>
+</html>

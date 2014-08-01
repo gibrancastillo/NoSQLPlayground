@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Sortable HTML Table</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<script type="text/javascript" src="sortable.js"></script>
+<style type="text/css">
+	body { background: #fff; }
+	td,th { text-align: left; font-family: arial,sans-serif; }
+	th { border-bottom: 1px solid #000; background: #ddd; }
+	.oddRow { background: #fff; }
+	.evenRow { background: #eee; }
+</style>
+</head>
+<body>
+<table id="t1" class="sortable" cellpadding="2" cellspacing="1" border="0" style="width:100%; border:1px solid #000;">
+    <tr>
+        <th style="width:40%;">Name</th>
+        <th style="width:20%;">Salary</th>
+        <th style="width:20%;" class="nosort">Extension - nosort</th>
+        <th style="width:20%;">Start date</th>
+    </tr>
+    <tr>
+        <td>Varunkamar, Rahul</td>
+        <td>$12000.00</td>
+        <td>1353</td>
+        <td>08/18/2013</td>
+    </tr>
+    <tr>
+        <td>Turvey, Kevin</td>
+        <td>$191200.00</td>
+        <td>2342</td>
+        <td>02.05.1979</td>
+    </tr>
+    <tr>
+        <td>Persi, Arnoldo</td>
+        <td>$32010.12</td>
+        <td>2755</td>
+        <td>09/08/1998</td>
+    </tr>
+    <tr>
+        <td>Hokuki, Yuki</td>
+        <td>$122000.00</td>
+        <td>3211</td>
+        <td>12/11/1981</td>
+    </tr>
+    <tr>
+        <td>Schimmidt, Van</td>
+        <td>$9000</td>
+        <td>9005</td>
+        <td>01-01-2002</td>
+    </tr>
+    <tr>
+        <td>Fitz, Marvin</td>
+        <td>$3300</td>
+        <td>5554</td>
+        <td>05/18/1995</td>
+    </tr>
+</table>
+<p></p>
+<table id="t2" class="sortable" cellpadding="2" cellspacing="1" border="0" style="width:100%; border:1px solid #000;">
+    <tr>
+        <th style="width:40%;">Name</th>
+        <th style="width:20%;">Salary</th>
+        <th style="width:20%;" class="nosort">Extension</th>
+        <th style="width:20%;">Start date</th>
+    </tr>
+    <tr>
+        <td>Bloggs, Fred</td>
+        <td>$12000.00</td>
+        <td>1353</td>
+        <td>18/08/2003</td>
+    </tr>
+    <tr>
+        <td>Youssef, Kevin</td>
+        <td>$191200.00</td>
+        <td>2342</td>
+        <td>02/05/1979</td>
+    </tr>
+    <tr>
+        <td>Mordlaz, Youkv</td>
+        <td>$32010.12</td>
+        <td>2755</td>
+        <td>09/08/1998</td>
+    </tr>
+    <tr>
+        <td>Shakespeare, Bill</td>
+        <td>$122000.00</td>
+        <td>3211</td>
+        <td>12/11/1961</td>
+    </tr>
+    <tr>
+        <td>Rodriguez, Juan</td>
+        <td>$9000</td>
+        <td>9005</td>
+        <td>01/01/2002</td>
+    </tr>
+    <tr>
+        <td>Swamanthan, Srini</td>
+        <td>$3300</td>
+        <td>5554</td>
+        <td>22/05/1995</td>
+    </tr>
+</table>
+</body>
+</html>
